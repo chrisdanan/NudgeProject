@@ -11,7 +11,7 @@ function writeCSS(res) {
         "Content-Type": "text/css"
     });
 
-    res.write("/* style.css - this space intentionally left blank */");
+    res.write("body{margin:auto; background-color: #98fffc;}\n");
     res.end();
 }
 
@@ -22,11 +22,33 @@ function beginPage(res, title) {
     res.write("<meta charset='utf-8'>\n");
     res.write("<title>"+ title + "</title>\n");
     res.write("<link rel='stylesheet' href='style.css' type='text/css'>\n");
+    /*I tried to add bootstrap by linking the bootstrap files I have on my local machine, but that didn't seem to work:
+    res.write("<link rel='stylesheet' href='css/bootstrap.min.css' />\n");
+    In the end, I added bootstrap by using the bootstrap cdn, and it worked!*/
+    //Bootstrap CDN for CSS:
+    res.write("<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css'>\n");
     res.write("</head>\n");
     res.write("<body>\n");
+    //Create jumbotron div.
+    res.write("<nav class='navbar navbar-inverse navbar-fixed-top'>\n");
+    res.write("<div class='navbar-header'>\n");
+    //res.write("<h3 class='text-info'>nudge.js</h3>\n");
+    res.write("<p class='navbar-brand'>nudge.js</p>\n");
+    res.write("</div>\n");
+    res.write("</nav>\n");
+    res.write("<div class='jumbotron'>\n");
+    //res.write("<p class='text-info'>Hello Vane</p>\n");
 }
 
 function endPage(res) {
+    //Close jumbotron div.
+    res.write("</div>\n");
+    /*I tried to add bootstrap by linking to the files I have on my local machine, but that didn't seem to work:
+    res.write("<script src='http://code.jquery.com/jquery-1.11.2.min.js'></script>\n");
+    res.write("<script src='js/bootstrap.min.js'></script>\n");
+    So I used the bootstrap cdn instead, and it worked!*/
+    //Bootstrap CDN for Javascript:
+    res.write("<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js'></script>\n");
     res.write("</body>\n");
     res.write("</html>\n");
     res.end();
@@ -45,6 +67,7 @@ function writePre(res, divClass, data) {
     res.write(escaped);
     res.write("</pre>\n");
     res.write("</div>\n");
+    res.write("</div>\n");
 }
 
 function beginForm(res) {
@@ -52,7 +75,14 @@ function beginForm(res) {
 }
 
 function endForm(res) {
-    res.write("<input type='submit' value='Push'>\n");
+    //End the div container for the branch and remote divs first.
+    res.write("</div>\n");
+    res.write("</div>\n");
+
+    //Center button (or at least try to)
+    res.write("<div class='container'>\n");
+    res.write("<input type='submit' value='Push' class='btn btn-primary btn-lg'>\n");
+    res.write("</div>\n");
     res.write("</form>\n");
 }
 
@@ -60,7 +90,10 @@ function capitalize(str) {
     return str[0].toUpperCase() + str.slice(1);
 }
 
+//This does branch or remote divs and selects.
 function beginSelect(res, what) {
+    //Create cols:
+    res.write("<div class='col-md-6'>\n");
     res.write("<div class='" + what + "_div'>\n");
     res.write("<label for='" + what + "_select'>" + capitalize(what) + "</label>\n");
     res.write("<select id='" + what + "_select' name='" + what + "'>\n");
@@ -72,6 +105,7 @@ function writeOption(res, option) {
 
 function endSelect(res) {
     res.write("</select>\n");
+    res.write("</div>\n");
     res.write("</div>\n");
 }
 
@@ -109,6 +143,10 @@ function gitBranch(res) {
         } else {
             var output = stdout.toString(),
                 branches = output.split(/\n/);
+
+            //Begin div container for the branch and remote divs.
+            res.write("<div class='container'>\n");
+            res.write("<div class='row'>\n");
 
             beginForm(res);
             beginSelect(res, "branch");
@@ -176,6 +214,10 @@ function frontPage(req, res) {
         var title = "Nudge - Web Interface for Git Push";
 
         beginPage(res, title);
+
+        //Center content.
+        res.write("<div class='container'>\n");
+
         writeHeading(res, "h1", title);
 
         if (req.method === "POST" && req.url === "/push") {
