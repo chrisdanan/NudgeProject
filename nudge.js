@@ -42,7 +42,7 @@ function beginPage(res, title) {
 
 function endPage(res) {
     //Close jumbotron div.
-    res.write("</div>\n");
+    //res.write("</div>\n");
     /*I tried to add bootstrap by linking to the files I have on my local machine, but that didn't seem to work:
     res.write("<script src='http://code.jquery.com/jquery-1.11.2.min.js'></script>\n");
     res.write("<script src='js/bootstrap.min.js'></script>\n");
@@ -66,6 +66,7 @@ function writePre(res, divClass, data) {
     res.write("<pre>");
     res.write(escaped);
     res.write("</pre>\n");
+    res.write("</div>\n");
     res.write("</div>\n");
     res.write("</div>\n");
 }
